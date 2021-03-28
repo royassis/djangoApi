@@ -1,17 +1,14 @@
-from rest_framework import viewsets, mixins
-from django.http import HttpResponseRedirect
-from django.shortcuts import render
-from rest_framework.generics import get_object_or_404
-from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet
+import logging
 import pickle
 
+from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import render
+from rest_framework import viewsets, serializers
+from rest_framework.views import APIView
+
 from .forms import UploadFileForm
-
-from .serializers import HeroSerializer, ModelSerializer
 from .models import Hero, Model
-
-import logging
+from .serializers import HeroSerializer, ModelSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -24,6 +21,34 @@ class HeroViewSet(viewsets.ModelViewSet):
 class ModelViewSet(viewsets.ModelViewSet):
     queryset = Model.objects.all().order_by(r'name')
     serializer_class = ModelSerializer
+
+
+class PredictView(APIView):
+    queryset = Model.objects.all().order_by(r'name')
+    serializer_class = ModelSerializer
+
+    class IncredibleInputSerializer(serializers.Serializer):
+        model_input = serializers.CharField()
+        id = serializers.IntegerField()
+
+    def get(self, request):
+        # Validate the incoming input (provided through query parameters)
+        serializer = self.IncredibleInputSerializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+
+        # Get the model input
+        data = serializer.validated_data
+        model_input = data["model_input"]
+        model_id = data["id"]
+
+        mymodel = Model.objects.get(pk=model_id)
+        mymodel = pickle.loads(mymodel.model)
+
+        # Perform the complex calculations
+        complex_result = model_input + str(mymodel)
+
+        # Return it in your custom format
+        return JsonResponse({"complex_result": complex_result, })
 
 
 def upload_file(request):
