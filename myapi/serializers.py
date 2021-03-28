@@ -11,4 +11,4 @@ class HeroSerializer(serializers.HyperlinkedModelSerializer):
 class ModelSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Model
-        fields = ('id','name', 'model')
+        fields = ('id','name', 'model', 'upload')

@@ -11,7 +11,7 @@ class Hero(models.Model):
 class Model(models.Model):
     name = models.CharField(max_length=120)
     model = models.BinaryField()
-    upload = models.FileField(upload_to='uploads/', null=True)
+    upload = models.FileField(upload_to='message/%Y/%m/%d/', null=True, blank=True)
 
     def __str__(self):
         return self.name
