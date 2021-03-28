@@ -11,5 +11,6 @@ router.register('models', views.ModelViewSet)
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('', include(router.urls)),
+    path('upload/', views.upload_file, name='upload'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
