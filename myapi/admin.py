@@ -1,4 +1,5 @@
 from django.contrib import admin
-from .models import Hero
+from .models import MlModel, MlProject
 
-admin.site.register(Hero)
+admin.site.register(MlModel)
+admin.site.register(MlProject)

@@ -7,24 +7,24 @@ from rest_framework import viewsets, serializers
 from rest_framework.views import APIView
 
 from .forms import UploadFileForm
-from .models import Hero, Model
-from .serializers import HeroSerializer, ModelSerializer
+from .models import  MlModel, MlProject
+from .serializers import  ModelSerializer
 
 logger = logging.getLogger(__name__)
 
 
-class HeroViewSet(viewsets.ModelViewSet):
-    queryset = Hero.objects.all().order_by(r'name')
-    serializer_class = HeroSerializer
-
 
 class ModelViewSet(viewsets.ModelViewSet):
-    queryset = Model.objects.all().order_by(r'name')
+    queryset = MlModel.objects.all().order_by(r'name')
+    serializer_class = ModelSerializer
+
+class MlProjectViewSet(viewsets.ModelViewSet):
+    queryset = MlProject.objects.all().order_by(r'name')
     serializer_class = ModelSerializer
 
 
 class PredictView(APIView):
-    queryset = Model.objects.all().order_by(r'name')
+    queryset = MlModel.objects.all().order_by(r'name')
     serializer_class = ModelSerializer
 
     class IncredibleInputSerializer(serializers.Serializer):
@@ -41,7 +41,7 @@ class PredictView(APIView):
         model_input = data["model_input"]
         model_id = data["id"]
 
-        mymodel = Model.objects.get(pk=model_id)
+        mymodel = MlModel.objects.get(pk=model_id)
         mymodel = pickle.loads(mymodel.model)
 
         # Perform the complex calculations
@@ -56,7 +56,7 @@ def upload_file(request):
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             f = request.FILES['file']
-            new_model = Model(name=form.cleaned_data['title'], model=f.read())
+            new_model = MlModel(name=form.cleaned_data['title'], model=f.read())
             new_model.save()
             logger.debug(f"model saved")
             return HttpResponseRedirect('')
