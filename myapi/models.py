@@ -9,7 +9,7 @@ class MlProject(models.Model):
 
 
 class MlModel(models.Model):
-    project = models.ForeignKey(MlProject, on_delete=models.CASCADE, default=1)
+    project = models.ForeignKey(MlProject, on_delete=models.CASCADE, related_name="mlmodels")
     name = models.CharField(max_length=120)
     model = models.BinaryField()
     upload = models.FileField(upload_to='message/%Y/%m/%d/', null=True, blank=True)

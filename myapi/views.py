@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 
 from .forms import UploadFileForm
 from .models import  MlModel, MlProject
-from .serializers import  ModelSerializer
+from .serializers import  MlModelSerializer, MlProjectSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -16,16 +16,16 @@ logger = logging.getLogger(__name__)
 
 class ModelViewSet(viewsets.ModelViewSet):
     queryset = MlModel.objects.all().order_by(r'name')
-    serializer_class = ModelSerializer
+    serializer_class = MlModelSerializer
 
 class MlProjectViewSet(viewsets.ModelViewSet):
     queryset = MlProject.objects.all().order_by(r'name')
-    serializer_class = ModelSerializer
+    serializer_class = MlProjectSerializer
 
 
 class PredictView(APIView):
     queryset = MlModel.objects.all().order_by(r'name')
-    serializer_class = ModelSerializer
+    serializer_class = MlModelSerializer
 
     class IncredibleInputSerializer(serializers.Serializer):
         model_input = serializers.CharField()
