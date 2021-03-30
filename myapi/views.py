@@ -17,6 +17,24 @@ class ModelViewSet(viewsets.ModelViewSet):
     queryset = MlModel.objects.all().order_by(r'name')
     serializer_class = MlModelSerializer
 
+    def update(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+
+        # Get the model input
+        data = serializer.validated_data
+        model_input = data["model_input"]
+        model_id = data["id"]
+
+        mymodel = MlModel.objects.get(pk=model_id)
+        mymodel = pickle.loads(mymodel.model)
+
+        # Perform the complex calculations
+        complex_result = model_input + str(mymodel)
+
+        # Return it in your custom format
+        return JsonResponse({"complex_result": complex_result, })
+
 
 class MlProjectViewSet(viewsets.ModelViewSet):
     queryset = MlProject.objects.all().order_by(r'name')

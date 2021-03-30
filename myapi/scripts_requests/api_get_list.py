@@ -18,5 +18,3 @@ filecontent = r.content
 obj = pickle.loads(filecontent)
 
 print(obj)
-
-
