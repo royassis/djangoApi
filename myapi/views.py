@@ -7,16 +7,16 @@ from rest_framework import viewsets, serializers
 from rest_framework.views import APIView
 
 from .forms import UploadFileForm
-from .models import  MlModel, MlProject
-from .serializers import  MlModelSerializer, MlProjectSerializer
+from .models import MlModel, MlProject
+from .serializers import MlModelSerializer, MlProjectSerializer
 
 logger = logging.getLogger(__name__)
-
 
 
 class ModelViewSet(viewsets.ModelViewSet):
     queryset = MlModel.objects.all().order_by(r'name')
     serializer_class = MlModelSerializer
+
 
 class MlProjectViewSet(viewsets.ModelViewSet):
     queryset = MlProject.objects.all().order_by(r'name')
