@@ -4,13 +4,14 @@ import pickle
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from rest_framework import viewsets, serializers
+from rest_framework.renderers import JSONRenderer
 from rest_framework.views import APIView
 
 from .forms import UploadFileForm
 from .models import MlModel, MlProject
 from .serializers import MlModelSerializer, MlProjectSerializer
 
-logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
 
 
 class ModelViewSet(viewsets.ModelViewSet):
@@ -18,22 +19,29 @@ class ModelViewSet(viewsets.ModelViewSet):
     serializer_class = MlModelSerializer
 
     def update(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.query_params)
+        instance = self.get_object()
+
+        serializer = self.serializer_class(data=request.POST)
         serializer.is_valid(raise_exception=True)
 
-        # Get the model input
         data = serializer.validated_data
-        model_input = data["model_input"]
-        model_id = data["id"]
 
-        mymodel = MlModel.objects.get(pk=model_id)
-        mymodel = pickle.loads(mymodel.model)
+        logging.debug(serializer.data)
+        logging.debug(data)
+        logging.debug("*" * 100)
 
-        # Perform the complex calculations
-        complex_result = model_input + str(mymodel)
+        new_name = data["name"]
+        new_project = data["project"]
+        new_upload = serializer.data["upload"]
 
-        # Return it in your custom format
-        return JsonResponse({"complex_result": complex_result, })
+        mymodel = MlModel.objects.get(pk=instance.id)
+        mymodel.name = new_name
+        mymodel.project = new_project
+        mymodel.upload = new_upload
+
+        mymodel.save()
+
+        return JsonResponse(serializer.data)
 
 
 class MlProjectViewSet(viewsets.ModelViewSet):
@@ -76,7 +84,7 @@ def upload_file(request):
             f = request.FILES['file']
             new_model = MlModel(name=form.cleaned_data['title'], model=f.read())
             new_model.save()
-            logger.debug(f"model saved")
+            logging.debug(f"model saved")
             return HttpResponseRedirect('')
     else:
         form = UploadFileForm()
