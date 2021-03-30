@@ -1,8 +1,8 @@
 from django.db import models
 
-
 class MlProject(models.Model):
     name = models.CharField(max_length=120)
+    created = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
         return self.name
@@ -13,6 +13,7 @@ class MlModel(models.Model):
     name = models.CharField(max_length=120)
     model = models.BinaryField(null=True)
     upload = models.FileField(upload_to='message/%Y/%m/%d/', null=True, blank=True)
+    created = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
         return self.name
