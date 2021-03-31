@@ -4,7 +4,7 @@ import pickle
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from rest_framework import viewsets, serializers
-from rest_framework.renderers import JSONRenderer
+from rest_framework.parsers import FileUploadParser, JSONParser, FormParser
 from rest_framework.views import APIView
 
 from .forms import UploadFileForm
@@ -19,6 +19,7 @@ class ModelViewSet(viewsets.ModelViewSet):
     serializer_class = MlModelSerializer
 
     def update(self, request, *args, **kwargs):
+
         instance = self.get_object()
 
         serializer = self.serializer_class(data=request.POST)
@@ -26,18 +27,17 @@ class ModelViewSet(viewsets.ModelViewSet):
 
         data = serializer.validated_data
 
-        logging.debug(serializer.data)
-        logging.debug(data)
-        logging.debug("*" * 100)
-
         new_name = data["name"]
         new_project = data["project"]
-        new_upload = serializer.data["upload"]
 
         mymodel = MlModel.objects.get(pk=instance.id)
         mymodel.name = new_name
         mymodel.project = new_project
-        mymodel.upload = new_upload
+
+        try:
+            mymodel.upload = request.FILES['upload']
+        except Exception:
+            mymodel.upload = None
 
         mymodel.save()
 

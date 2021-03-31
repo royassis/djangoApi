@@ -23,13 +23,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '+st-)1w7k3gu%!@kh#-xe7hg6*#0#uxzdgd5&#j1!2221i&9j$'
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# SECURITY WARNING: don't run with debug turned on in production!`
 DEBUG = True
 
 ALLOWED_HOSTS = []
 
 MEDIA_URL = '/uploads/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "uploads")
+
+MLPROJECTS_DIR = 'mlproject'
+MEDIA_MLMODELS_ROOT = os.path.join(MEDIA_ROOT, MLPROJECTS_DIR)
 
 # Application definition
 
