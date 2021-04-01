@@ -14,7 +14,10 @@ class MlProject(models.Model):
         return self.name
 
 def project_path(instance, filename):
-    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    # Get appname
+    #instance._meta.app_label
+
+    # file will be uploaded to MEDIA_ROOT/settings.MLPROJECTS_DIR/instance.project.name/filename
     return f"{settings.MLPROJECTS_DIR}/{instance.project.name}/{filename}"
 
 class MlModel(models.Model):
@@ -27,11 +30,4 @@ class MlModel(models.Model):
     def __str__(self):
         return self.name
 
-    @receiver(pre_save)
-    def delete_project_folder(sender, instance, *args, **kwargs):
-        try:
-            p = Path(settings.MEDIA_MLMODELS_ROOT).joinpath(str(instance.project.name))
-            shutil.rmtree(p)
-        except FileNotFoundError:
-            pass
 

@@ -1,6 +1,9 @@
 import logging
 import pickle
+import shutil
+from pathlib import Path
 
+from django.conf import settings
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from rest_framework import viewsets, serializers
@@ -14,6 +17,13 @@ from .serializers import MlModelSerializer, MlProjectSerializer
 logging.basicConfig(level=logging.DEBUG)
 
 
+def delete_project_folder(instance, *args, **kwargs):
+    try:
+        p = Path(settings.MEDIA_MLMODELS_ROOT).joinpath(str(instance.project.name))
+        shutil.rmtree(p)
+    except FileNotFoundError:
+        pass
+
 class ModelViewSet(viewsets.ModelViewSet):
     queryset = MlModel.objects.all().order_by(r'name')
     serializer_class = MlModelSerializer
@@ -21,6 +31,8 @@ class ModelViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
 
         instance = self.get_object()
+
+        delete_project_folder(instance)
 
         serializer = self.serializer_class(data=request.POST)
         serializer.is_valid(raise_exception=True)
