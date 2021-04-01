@@ -7,7 +7,6 @@ from django.conf import settings
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from rest_framework import viewsets, serializers
-from rest_framework.parsers import FileUploadParser, JSONParser, FormParser
 from rest_framework.views import APIView
 
 from .forms import UploadFileForm
@@ -24,34 +23,24 @@ def delete_project_folder(instance, *args, **kwargs):
     except FileNotFoundError:
         pass
 
+
 class ModelViewSet(viewsets.ModelViewSet):
     queryset = MlModel.objects.all().order_by(r'name')
     serializer_class = MlModelSerializer
 
     def update(self, request, *args, **kwargs):
-
         instance = self.get_object()
 
         delete_project_folder(instance)
 
-        serializer = self.serializer_class(data=request.POST)
+        serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        data = serializer.validated_data
+        instance.name = serializer.validated_data.get("name")
+        instance.project = serializer.validated_data.get("project")
+        instance.upload = serializer.validated_data.get("upload")
 
-        new_name = data["name"]
-        new_project = data["project"]
-
-        mymodel = MlModel.objects.get(pk=instance.id)
-        mymodel.name = new_name
-        mymodel.project = new_project
-
-        try:
-            mymodel.upload = request.FILES['upload']
-        except Exception:
-            mymodel.upload = None
-
-        mymodel.save()
+        instance.save()
 
         return JsonResponse(serializer.data)
 
