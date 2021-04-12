@@ -1,19 +1,14 @@
-import pickle
-
 import requests
 
-file = open(r'C:\Users\Roy\djangoProjects\djangoApi\myapi\examples\api_request_example.ps1', "wb+")
-files = {"filename": file}
-pickled_obj = pickle.dumps("Asd")
+file = open(r'C:\Users\Roy\djangoProjects\djangoApi\myapi\scripts_requests\api_get_list.py', "wb+")
+files = {"file": file}
 
-payload = {'name': "mynewmodel", 'model': pickled_obj}
-payload = {
-    "name": "proj_z",
-    "mlmodels": [{"name": "model_z"}]
-}
+payload = {'project': 25, 'name': "model_i"}
 auth = ('roy', '1234')
-url = "http://localhost:8000/api/mlproject/"
+url = "http://localhost:8000/api/mlmodels/"
 
-r = requests.post(url=url, json=payload, auth=auth, files=files)
+r = requests.post(url=url, data=payload, auth=auth, files=files)
 
 print(r.status_code)
+
+file.close()

@@ -30,7 +30,6 @@ class ModelViewSet(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-
         delete_project_folder(instance)
 
         serializer = self.serializer_class(data=request.data)
@@ -38,7 +37,7 @@ class ModelViewSet(viewsets.ModelViewSet):
 
         instance.name = serializer.validated_data.get("name")
         instance.project = serializer.validated_data.get("project")
-        instance.upload = serializer.validated_data.get("upload")
+        instance.upload = request.data.get("file")
 
         instance.save()
 
