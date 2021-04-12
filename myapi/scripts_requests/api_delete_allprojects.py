@@ -1,4 +1,4 @@
-import pickle
+from concurrent.futures import ThreadPoolExecutor
 
 import requests
 
@@ -9,7 +9,7 @@ r = requests.get(url=url, auth=auth)
 
 data =r.json()
 
-for mlproject in data:
-    print(mlproject)
-    requests.delete(url+f"{mlproject['id']}/")
+with ThreadPoolExecutor() as executor:
+    futures = [requests.delete(url+f"{mlproject['id']}/") for mlproject in data]
+
 
