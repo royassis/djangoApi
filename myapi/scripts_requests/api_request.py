@@ -1,4 +1,5 @@
 import requests
+from pathlib import Path
 
 url = "http://localhost:8000/api/mlproject/"
 auth = ('roy', '1234')
@@ -6,7 +7,8 @@ auth = ('roy', '1234')
 r = requests.get(url=url, auth=auth)
 project_id = int(r.json()[0].get("id"))
 
-file = open(r'C:\Users\Roy\djangoProjects\djangoApi\myapi\scripts_requests\api_request.py', "rb")
+p = Path(__file__).parent.joinpath("api_request.py")
+file = open(p, "rb")
 files = {"upload": file}
 payload = {'project': project_id, 'name': "model_new"}
 url = "http://localhost:8000/api/mlmodels/"
