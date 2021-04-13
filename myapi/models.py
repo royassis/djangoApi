@@ -13,6 +13,14 @@ class MlProject(models.Model):
     def __str__(self):
         return self.name
 
+    def delete(self, using=None, keep_parents=False):
+        path = Path(settings.MEDIA_ROOT).joinpath(settings.MLPROJECTS_DIR).joinpath(self.name)
+        try:
+            shutil.rmtree(path)
+        except:
+            pass
+        super().delete()
+
 def project_path(instance, filename):
     # Get appname
     #instance._meta.app_label
@@ -29,5 +37,12 @@ class MlModel(models.Model):
 
     def __str__(self):
         return self.name
+
+    def delete(self, using=None, keep_parents=False):
+        try:
+            self.upload.storage.delete(self.upload.name)
+        except:
+            pass
+        super().delete()
 
 
