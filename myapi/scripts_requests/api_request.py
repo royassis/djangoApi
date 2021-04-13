@@ -1,12 +1,14 @@
 import requests
 from pathlib import Path
 
+# Get some project id from repo
 url = "http://localhost:8000/api/mlproject/"
 auth = ('roy', '1234')
 
 r = requests.get(url=url, auth=auth)
 project_id = int(r.json()[0].get("id"))
 
+# Send request - create new model with file upload
 p = Path(__file__).parent.joinpath("api_request.py")
 file = open(p, "rb")
 files = {"upload": file}
