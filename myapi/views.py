@@ -88,4 +88,13 @@ def upload_file(request):
             return HttpResponseRedirect('')
     else:
         form = UploadFileForm()
-    return render(request, 'upload.html', {'form': form})
+    return render(request, 'myapi/upload.html', {'form': form})
+
+class Predict(APIView):
+    def post(self, request, id, *args, **kwargs):
+        proj = MlProject.objects.get(id=id)
+        last_model_orm_object = proj.mlmodels.last()
+        m_as_bytes = last_model_orm_object.upload.read()
+        m = pickle.loads(m_as_bytes)
+        prediction = m.predict(request.data.get("data"))
+        return JsonResponse({"data": prediction.tolist()})
